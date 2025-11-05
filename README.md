@@ -1,5 +1,66 @@
 # regul-energia-lakehouse
 
+
+# 🌐 Projeto CKAN API – Continuidade e Compensação
+
+Este projeto tem como objetivo automatizar a **extração, padronização e consolidação de dados públicos** provenientes do **CKAN (Comprehensive Knowledge Archive Network)**, com foco específico nas temáticas de **continuidade e compensação** de benefícios e políticas sociais.
+
+A solução foi desenvolvida dentro do ecossistema **Databricks**, aproveitando os recursos nativos de **orquestração (Workflows/Jobs)**, **Delta Lake**, **PySpark** e **Unity Catalog** para garantir governança, rastreabilidade e performance.
+
+---
+
+## 🧩 Contexto
+
+O CKAN é uma plataforma aberta amplamente utilizada por órgãos públicos para **publicar e gerenciar dados governamentais**.  
+Neste projeto, os datasets extraídos referem-se a registros administrativos e operacionais ligados à **execução de programas sociais**, especialmente o **BPC (Benefício de Prestação Continuada)**.
+
+A análise de **continuidade** e **compensação** busca identificar:
+- **Continuidade** → se um beneficiário manteve o recebimento do benefício ao longo do tempo, avaliando eventuais interrupções administrativas;
+- **Compensação** → casos em que há sobreposição ou substituição de pagamentos (ex.: valores restituídos ou compensados entre períodos).
+
+Essas informações são fundamentais para:
+- Monitorar **regularidade dos pagamentos**;
+- Detectar **falhas ou duplicidades** entre bases;
+- Apoiar **tomadas de decisão** e auditorias internas.
+
+---
+
+## ⚙️ Arquitetura e Tecnologias
+
+A pipeline segue o modelo de arquitetura **Medallion (Bronze → Silver → Gold)** dentro do Databricks, com **Jobs** controlando o fluxo de execução.
+
+| Camada | Descrição | Tecnologias |
+|---------|------------|-------------|
+| **Bronze** | Ingestão bruta dos dados extraídos da API CKAN. | `Python`, `Requests`, `Databricks Jobs` |
+| **Silver** | Padronização, limpeza, enriquecimento e reconciliação de inconsistências. | `PySpark`, `Delta Lake` |
+| **Gold** | Modelagem analítica final (tabelas fato e dimensão, métricas de continuidade e compensação). | `SQL`, `Power BI`, `Unity Catalog` |
+
+---
+
+## 🧠 Orquestração no Databricks Workflows
+
+A execução do pipeline é feita via **Databricks Workflows (Jobs)** — uma ferramenta nativa de orquestração, agendamento e monitoramento.
+
+### 🔁 Estrutura do Job
+
+**Job: `ckan_continuidade_compensacao`**
+
+| Task | Descrição | Tipo | Dependência |
+|------|------------|------|--------------|
+| **1. Extração CKAN** | Conecta à API CKAN, baixa os datasets e salva na camada Bronze. | Notebook Python | — |
+| **2. Transformação / Compensação** | Aplica regras de continuidade e compensação (PySpark). | Notebook PySpark | Task 1 |
+| **3. Publicação Final** | Atualiza tabelas Gold e expõe métricas analíticas. | Notebook SQL | Task 2 |
+
+Cada task roda em **clusters otimizados**, com controle de versionamento e alertas configurados para falhas ou execuções parciais.
+
+### 📅 Agendamentos e Alertas
+
+- **Agendamento**: diário às 02h00 (ajustável conforme atualização da API CKAN)  
+- **Retries automáticos** em caso de erro de rede na ingestão  
+- **Notificação via e-mail ou webhook** quando o job falhar ou concluir com warnings  
+
+---
+
 ```text
 [runjobs.py] ──chama──>  [Wrappers]
                              │
