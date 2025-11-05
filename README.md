@@ -1,27 +1,18 @@
-# regul-energia-lakehouse
-
-
 # 🌐 Projeto CKAN API – Continuidade e Compensação
 
-Este projeto tem como objetivo automatizar a **extração, padronização e consolidação de dados públicos** provenientes do **CKAN (Comprehensive Knowledge Archive Network)**, com foco específico nas temáticas de **continuidade e compensação** de benefícios e políticas sociais.
+## ⚙️ Contexto
 
-A solução foi desenvolvida dentro do ecossistema **Databricks**, aproveitando os recursos nativos de **orquestração (Workflows/Jobs)**, **Delta Lake**, **PySpark** e **Unity Catalog** para garantir governança, rastreabilidade e performance.
+A **ANEEL (Agência Nacional de Energia Elétrica)** disponibiliza mensalmente, em seu portal de dados abertos ([dados.aneel.gov.br](https://dados.aneel.gov.br/)), informações sobre a **qualidade do fornecimento de energia elétrica**, enviadas por todas as **distribuidoras do país**.
 
----
+Os principais conjuntos de dados tratados neste projeto são:
 
-## 🧩 Contexto
+| Indicador | Nome | Descrição | Unidade |
+|------------|------|------------|----------|
+| **DEC** | Duração Equivalente de Interrupção por Unidade Consumidora | Mede o tempo médio (em horas) que os consumidores ficaram sem energia em determinado período. | horas |
+| **FEC** | Frequência Equivalente de Interrupção por Unidade Consumidora | Mede o número médio de interrupções no fornecimento de energia por unidade consumidora. | vezes |
+| **Compensação** | Compensação Financeira Automática | Representa os valores (em R$) creditados aos consumidores quando os limites de continuidade (DEC/FEC) são ultrapassados. | reais |
 
-O CKAN é uma plataforma aberta amplamente utilizada por órgãos públicos para **publicar e gerenciar dados governamentais**.  
-Neste projeto, os datasets extraídos referem-se a registros administrativos e operacionais ligados à **execução de programas sociais**, especialmente o **BPC (Benefício de Prestação Continuada)**.
-
-A análise de **continuidade** e **compensação** busca identificar:
-- **Continuidade** → se um beneficiário manteve o recebimento do benefício ao longo do tempo, avaliando eventuais interrupções administrativas;
-- **Compensação** → casos em que há sobreposição ou substituição de pagamentos (ex.: valores restituídos ou compensados entre períodos).
-
-Essas informações são fundamentais para:
-- Monitorar **regularidade dos pagamentos**;
-- Detectar **falhas ou duplicidades** entre bases;
-- Apoiar **tomadas de decisão** e auditorias internas.
+Os indicadores **DEC** e **FEC** compõem o conjunto de **indicadores de continuidade do fornecimento**, enquanto o dado de **compensação** reflete o **impacto financeiro regulatório** dessas violações, conforme definido nos **Procedimentos de Distribuição (PRODIST) – Módulo 8** da ANEEL.
 
 ---
 
